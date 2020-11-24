@@ -1,0 +1,28 @@
+﻿<div id='@ID' class="updates recent-updated">
+    <div id="updates-header1" class="card-header d-flex justify-content-between align-items-center"
+         data-toggle="collapse" data-parent='#@ID' href='#@title' aria-expanded="false" aria-controls="@title">
+        <div>
+            <a data-toggle="collapse" data-parent='#@ID' href='#@title' aria-expanded="false" aria-controls="@title" style="font-size:15px">@title</a>
+        </div><a data-toggle="collapse" data-parent='#@ID' href='#@title' aria-expanded="false" aria-controls="@title"><i class="fa fa-angle-down"></i></a>
+    </div>
+    <div id="@title" role="tabpanel" class="collapse">
+        <ul class="news list-unstyled" style="font-size:14px">
+            <!-- Item-->
+            <CascadingValue Value="this">
+                @roles
+            </CascadingValue>
+        </ul>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string ID { get; set; }
+
+    [Parameter]
+    public string title { get; set; }
+
+    [Parameter]
+    public RenderFragment roles { get; set; }
+
+}

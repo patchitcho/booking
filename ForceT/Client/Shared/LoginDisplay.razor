@@ -1,0 +1,32 @@
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        <nav class="navbar">
+            <div class="container-fluid">
+                <div class="navbar-holder d-flex align-items-center justify-content-between">
+                    <div class="navbar-header">
+                        <a id="toggle-btn" class="menu-btn" onclick="toggleSidBar()"><i class="icon-bars"> </i></a><a href="" class="navbar-brand">
+                            <div class="brand-text d-none d-md-inline-block"><span>Force </span><strong class="text-primary">TRACKING</strong></div>
+                        </a>
+                    </div>
+                    <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                        <li>
+                            <a style="color:white">Hello, @context.User.Identity.Name!</a>
+                            <button id="Deco" type="submit" class="btn btn-link" @onclick="Logout"><span class="Deco">Deconexion  </span><i id="Decoico" class="fa fa-sign-out" style="margin-left:5px"></i></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </Authorized>
+</AuthorizeView>
+
+@code{
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("/");
+    }
+}

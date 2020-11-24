@@ -1,0 +1,138 @@
+﻿@page "/vehicule"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+
+
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Liste des vehicule</h3>
+    </div>
+    <div class="card-body">
+        <p>
+            <a href="CreationVehicule">Créer une nouvelle vehicule</a>
+        </p>
+        @if (vehicules == null)
+        {
+            @*<p><em>Loading...</em></p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Ville</th>
+                            <th>Code postale</th>
+                        </tr>
+                    </thead>
+                </table>*@
+            <Annimation />
+        }
+        else
+        {
+            @*<DxDataGrid Data="@zones"
+                            ShowFilterRow="true">
+                    <DxDataGridColumn Field="@nameof(Zone.zone)"
+                                      Caption="Zone">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(Zone.ville)"
+                                      Caption="Ville">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(Zone.codepostal)"
+                                      Caption="Code postale">
+                    </DxDataGridColumn>
+                </DxDataGrid>*@
+            <div class="confluid">
+                <table id="indexzone" class="table table-bordered table-responsive-xl">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Poid</th>
+                            <th>Matricule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vehicule in vehicules)
+                        {
+                            <tr>
+                                <td>@vehicule.Nom</td>
+                                <td>@vehicule.Poid</td>
+                                <td>@vehicule.Matriculation</td>
+                                <td style="width:100px"><input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(vehicule))" data-toggle="modal" data-target="#DetailVehicule" value="Editer" /></td>
+                                <td style="width:100px"><input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(vehicule))" data-toggle="modal" data-target="#confirmDeleteModal" value="Supprimer" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <DetailVehicule vehicule="vehicule" DataChanged="@DataChanged"></DetailVehicule>
+            <ConfirmDialog OnClick="@Delete" />
+        }
+    </div>
+</div>
+
+
+
+
+@code {
+
+    Vehicule[] vehicules;
+    Vehicule vehicule = new Vehicule();
+    private bool hidden = false;
+    string adr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Vehicules";
+        //zones = await AuthService.GetJsonAsync<Vehicule[]>(new Uri(adr21));
+        //try
+        //{
+        response = await Http.GetAsync("api/Vehicules");
+        //response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            //vehicules = await JsonSerializer.DeserializeAsync<Vehicule[]>(responseContent);
+            vehicules = JsonConvert.DeserializeObject<Vehicule[]>(jsonContent);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+        //}
+        //catch (Exception e)
+        //{
+        //    adr = e.Message;
+        //}
+    }
+
+    private void PrepareForEdit(Vehicule vehiculeedit)
+    {
+        vehicule = vehiculeedit;
+    }
+    private void PrepareForDelete(Vehicule vehiculedelete)
+    {
+        vehicule = vehiculedelete;
+    }
+
+    private async void DataChanged()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Vehicules";
+        vehicules = await AuthService.GetJsonAsync<Vehicule[]>(new Uri(adr21));
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Vehicules/" + vehicule.VehiculeId;
+        var task = await AuthService.DeleteJsonAsync(new Uri(adr21));
+        await JSRuntime.InvokeAsync<object>("JsFunctions.CloseModal", "confirmDeleteModal");
+        DataChanged();
+        vehicule = new Vehicule();
+    }
+}

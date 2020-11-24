@@ -1,0 +1,172 @@
+﻿@page "/creationutilisateur"
+@inject HttpClient Http
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+    <div class="card" style="border-radius:10px">
+        <div class="card-header" style="border-radius:10px">
+            <h3>Création d'un nouveau utilisateur</h3>
+        </div>
+        <EditForm Model="registerModel" OnValidSubmit="Creerutilisateur">
+            <div style="font-size:15px">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+            </div>
+            <div class="card-body">
+                @if (ShowErrors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p>@Error</p>
+                    </div>
+                }
+                <div class="form-group">
+                    <label for="Nom">Nom :</label>
+                    <InputText placeholder="Nom" class="form-control" @bind-Value="registerModel.UserName" />
+                    <div style="font-size:12px">
+                        <ValidationMessage For="@(() => registerModel.UserName)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Nom">Mot de passe :</label>
+                    <InputText type="password" placeholder="Mot de passe" class="form-control" @bind-Value="registerModel.Password" />
+                    <div style="font-size:12px">
+                        <ValidationMessage For="@(() => registerModel.Password)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Nom">Confirmer le Mot de passe :</label>
+                    <InputText type="password" placeholder="Réecrire le mot de passe" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+                    <div style="font-size:12px">
+                        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Roles :</label>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3">
+                            <Roles title="Véhicule" ID="id1">
+                                <roles>
+                                    <Role label="Création de véhicule" bind="roleModel.VehiculeCreat" />
+                                    <Role label="Liste des véhicules" bind="roleModel.VehiculeRead" />
+                                    <Role label="Modification de véhicule" bind="roleModel.VehiculeUpdt" />
+                                    <Role label="Suppression de véhicule" bind="roleModel.VehiculeDlet" />
+                                </roles>
+                            </Roles>
+                            <Roles title="Adresse" ID="id2">
+                                <roles>
+                                    <Role label="Création d'adresse" bind="roleModel.AdresseCreat" />
+                                    <Role label="Liste des adresse" bind="roleModel.AdresseRead" />
+                                    <Role label="Modification d'adresse" bind="roleModel.AdresseUpdt" />
+                                    <Role label="Suppression d'adresse" bind="roleModel.AdresseDlet" />
+                                </roles>
+                            </Roles>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <Roles title="Sondage" ID="id3">
+                                <roles>
+                                    <Role label="Création de sondage" bind="roleModel.SondageCreat" />
+                                    <Role label="Liste des sondages" bind="roleModel.SondageRead" />
+                                    <Role label="Modification de sondage" bind="roleModel.SondageUpdt" />
+                                    <Role label="Suppression de sondage" bind="roleModel.SondageDlet" />
+                                </roles>
+                            </Roles>
+                            <Roles title="Course" ID="id4">
+                                <roles>
+                                    <Role label="Création de course" bind="roleModel.CourseCreat" />
+                                    <Role label="Liste des courses" bind="roleModel.CourseRead" />
+                                    <Role label="Modification de course" bind="roleModel.CourseUpdt" />
+                                    <Role label="Suppression de course" bind="roleModel.CourseDlet" />
+                                </roles>
+                            </Roles>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <Roles title="Zone" ID="id5">
+                                <roles>
+                                    <Role label="Création de zone" bind="roleModel.ZoneCreat" />
+                                    <Role label="Liste des zones" bind="roleModel.ZoneRead" />
+                                    <Role label="Modification de zone" bind="roleModel.ZoneUpdt" />
+                                    <Role label="Suppression de zone" bind="roleModel.ZoneDlet" />
+                                </roles>
+                            </Roles>
+                            <Roles title="Tournée" ID="id6">
+                                <roles>
+                                    <Role label="Création de tournée" bind="roleModel.TourneeCreat" />
+                                    <Role label="Liste des tournées" bind="roleModel.TourneeRead" />
+                                    <Role label="Modification de tournée" bind="roleModel.TourneeUpdt" />
+                                    <Role label="Suppression de tournée" bind="roleModel.TourneeDlet" />
+                                </roles>
+                            </Roles>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <Roles title="Agence" ID="id7">
+                                <roles>
+                                    <Role label="Création d'agence" bind="roleModel.AgenceCreat" />
+                                    <Role label="Liste des agences" bind="roleModel.AgenceRead" />
+                                    <Role label="Modification d'agence" bind="roleModel.AgenceUpdt" />
+                                    <Role label="Suppression d'agence" bind="roleModel.AgenceDlet" />
+                                </roles>
+                            </Roles>
+                        </div>
+                    </div>
+                    @if (show)
+                    {
+                        <div style="font-size:12px">
+                            <ValidationMessage For="@(() => registerModel.Roles)" />
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group text-center">
+                    @if (wait)
+                    {
+                        <button type="submit" class="btn btn-success">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Ajouter...
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-success">Ajouter</button>
+                    }
+                </div>
+            </div>
+        </EditForm>
+        
+    </div>
+
+
+@code {
+
+    RegisterModel registerModel = new RegisterModel();
+    RoleModel roleModel = new RoleModel();
+    RoleModel[] roleModels;
+    private bool wait = false;
+    bool show = false;
+    private bool ShowErrors;
+    private string Error = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task Creerutilisateur()
+    {
+        registerModel.Roles = roleModel;
+        string registerContent = JsonConvert.SerializeObject(registerModel);
+        var response = await Http.PostAsync("api/Accounts", new StringContent(registerContent, Encoding.UTF8, "application/json"));
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/utilisateur");
+            wait = false;
+        }
+        else
+        {
+            Error = response.StatusCode.ToString();
+            ShowErrors = true;
+        }
+    }
+}

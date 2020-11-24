@@ -1,0 +1,27 @@
+﻿.ocean-blazor-selected-search-result {
+    background-color: gainsboro;
+}
+
+.ocean-blazor-not-selected-search-result {
+    background-color: white;
+}
+
+    .ocean-blazor-not-selected-search-result:hover {
+        background-color: gainsboro;
+    }
+
+.ocean-blazor-auto-complete-not-found {
+    padding: .5em;
+    border: 1px solid;
+    width: 100%;
+}
+
+.ocean-blazor-auto-complete-container {
+    cursor: pointer;
+    border: 1px solid;
+    width: 100%;
+    max-height: 300px;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

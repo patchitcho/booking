@@ -1,0 +1,117 @@
+﻿@page "/DetailUtilisateur"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject IAuthService AuthService
+
+    <div class="card" style="border-radius:10px">
+        <div class="modal fade" tabindex="-1" role="dialog" id="DetailAdresse">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detail d'utilisateur</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <EditForm Model="@UpdUserModel" OnValidSubmit="@HandleValidSubmit">
+                        <div style="font-size:15px">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Véhicule" ID="id1">
+                                        <roles>
+                                            <Role label="Création de véhicule" bind="UpdUserModel.Roles.VehiculeCreat" />
+                                            <Role label="Liste des véhicules" bind="UpdUserModel.Roles.VehiculeRead" />
+                                            <Role label="Modification de véhicule" bind="UpdUserModel.Roles.VehiculeUpdt" />
+                                            <Role label="Suppression de véhicule" bind="UpdUserModel.Roles.VehiculeDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Adresse" ID="id2">
+                                        <roles>
+                                            <Role label="Création d'adresse" bind="UpdUserModel.Roles.AdresseCreat" />
+                                            <Role label="Liste des adresse" bind="UpdUserModel.Roles.AdresseRead" />
+                                            <Role label="Modification d'adresse" bind="UpdUserModel.Roles.AdresseUpdt" />
+                                            <Role label="Suppression d'adresse" bind="UpdUserModel.Roles.AdresseDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Sondage" ID="id3">
+                                        <roles>
+                                            <Role label="Création de sondage" bind="UpdUserModel.Roles.SondageCreat" />
+                                            <Role label="Liste des sondages" bind="UpdUserModel.Roles.SondageRead" />
+                                            <Role label="Modification de sondage" bind="UpdUserModel.Roles.SondageUpdt" />
+                                            <Role label="Suppression de sondage" bind="UpdUserModel.Roles.SondageDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Course" ID="id4">
+                                        <roles>
+                                            <Role label="Création de course" bind="UpdUserModel.Roles.CourseCreat" />
+                                            <Role label="Liste des courses" bind="UpdUserModel.Roles.CourseRead" />
+                                            <Role label="Modification de course" bind="UpdUserModel.Roles.CourseUpdt" />
+                                            <Role label="Suppression de course" bind="UpdUserModel.Roles.CourseDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Zone" ID="id5">
+                                        <roles>
+                                            <Role label="Création de zone" bind="UpdUserModel.Roles.ZoneCreat" />
+                                            <Role label="Liste des zones" bind="UpdUserModel.Roles.ZoneRead" />
+                                            <Role label="Modification de zone" bind="UpdUserModel.Roles.ZoneUpdt" />
+                                            <Role label="Suppression de zone" bind="UpdUserModel.Roles.ZoneDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Tournée" ID="id6">
+                                        <roles>
+                                            <Role label="Création de tournée" bind="UpdUserModel.Roles.TourneeCreat" />
+                                            <Role label="Liste des tournées" bind="UpdUserModel.Roles.TourneeRead" />
+                                            <Role label="Modification de tournée" bind="UpdUserModel.Roles.TourneeUpdt" />
+                                            <Role label="Suppression de tournée" bind="UpdUserModel.Roles.TourneeDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Agence" ID="id7">
+                                        <roles>
+                                            <Role label="Création d'agence" bind="UpdUserModel.Roles.AgenceCreat" />
+                                            <Role label="Liste des agences" bind="UpdUserModel.Roles.AgenceRead" />
+                                            <Role label="Modification d'agence" bind="UpdUserModel.Roles.AgenceUpdt" />
+                                            <Role label="Suppression d'agence" bind="UpdUserModel.Roles.AgenceDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@code {
+    [Parameter]
+    public RegisterModel UpdUserModel { get; set; }
+    [Parameter]
+    public Action DataChanged { get; set; }
+
+    private async void HandleValidSubmit()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Adresses/";// + adresse.AdresseId;
+        //var result = await AuthService.PutJsonAsync<Adresse>(new Uri(adr21), /*adresse*/);
+        await CloseTaskModal();
+        DataChanged?.Invoke();
+    }
+
+    private async Task CloseTaskModal()
+    {
+        await JSRuntime.InvokeAsync<object>("JsFunctions.CloseModal", "DetailAdresse");
+    }
+}

@@ -1,0 +1,88 @@
+﻿@page "/creationvehicule"
+@inject HttpClient Http
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Création d'une nouvelle véhicule</h3>
+    </div>
+    <EditForm Model="vehicule" OnValidSubmit="Creervehicule">
+        <div style="font-size:15px">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="Zone">Libellé du véhicule :</label>
+                <InputText placeholder="véhicule" class="form-control" @bind-Value="vehicule.Nom" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => vehicule.Nom)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Ville">Poid :</label>
+                <MyInputNumber placeholder="poid" class="form-control" @bind-Value="vehicule.Poid" ParsingErrorMessage="Vous devez saisir le poid" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => vehicule.Poid)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Code">Matricule :</label>
+                <InputText placeholder="Matricule" class="form-control" @bind-Value="vehicule.Matriculation"  />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => vehicule.Matriculation)" />
+                </div>
+            </div>
+            <div class="form-group text-center">
+                @if (wait)
+                {
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Ajouter...
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                }
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+
+    Vehicule vehicule = new Vehicule();
+    private bool wait = false;
+
+
+    private async Task Creervehicule()
+    {
+        //ShowErrors = false;
+        wait = true;
+        //await Task.Delay(10000);
+
+        //Uri crzone = new Uri("api/Vehicules");
+        //var result = await AuthService.PostJsonAsync<Zone>(crzone,zone);
+
+        //var zoneasjson = JsonSerializer.Serialize(zone);
+        string vehiculeContent = JsonConvert.SerializeObject(vehicule);
+        var response = await Http.PostAsync("api/Vehicules",new StringContent(vehiculeContent, Encoding.UTF8, "application/json"));
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/vehicule");
+            wait = false;
+        }
+        else
+        {
+            //    Error = result.Error;
+            //    ShowErrors = true;
+            response.StatusCode.ToString();
+        }
+    }
+}

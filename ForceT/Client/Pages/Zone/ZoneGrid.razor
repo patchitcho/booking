@@ -1,0 +1,54 @@
+﻿@page "/gridsample"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+
+
+@if (zones == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" 
+                PageSize="4" AllowSorting="true" Data="@zones" TItem="Zone" ColumnWidth="200px">
+        <Columns>
+            <RadzenGridColumn TItem="Zone" Property="zoneId" Title="ZoneId" />
+            <RadzenGridColumn TItem="Zone" Property="zone" Title="Zone" />
+            <RadzenGridColumn TItem="Zone" Property="ville" Title="Ville" />
+            <RadzenGridColumn TItem="Zone" Property="codepostal" Title="Code postale" />
+        </Columns>
+    </RadzenGrid>
+}
+
+@code
+    {
+    Zone[] zones;
+    Zone zone = new Zone();
+    private bool hidden = false;
+    string adr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Zones";
+
+        response = await Http.GetAsync("api/Zones");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            //zones = await JsonSerializer.DeserializeAsync<Zone[]>(responseContent);
+            zones = JsonConvert.DeserializeObject<Zone[]>(jsonContent);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+        //await JSRuntime.InvokeAsync<string>("TestDataTablesAdd", new string[] { "#indexzone" });
+    }
+}

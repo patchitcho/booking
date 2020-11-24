@@ -1,0 +1,202 @@
+﻿@typeparam TItem
+@inherits BlazorGridColumnBase
+
+@using Microsoft.AspNetCore.Components.Web
+@using BlazorDataGrid.Services
+@inject AppState AppState
+
+<th style='@ThStyle ;vertical-align: top;'>
+        @if (ChildContent != null)
+        {
+            <span class="hov" @onclick="@(() => SortTable(ColumnName))">@ChildContent</span>
+        }
+        else
+        {
+            <span class="hov" @onclick="@(() => SortTable(ColumnName))">@DisplayColumnName</span>
+        }
+        <span style="color: #33b35a;cursor: pointer;float: right" @onclick="(() => search(true))"><i class="oi oi-magnifying-glass"></i></span>
+        <span style="color:coral;float:right"><i class="oi @(GetSortStyle(ColumnName))"></i></span>
+        @*<div class="oi oi-magnifying-glass" style="color:#33b35a;cursor: pointer;float:right" @onclick="(() => search(true))"></div>*@
+        @*<div class="oi @(GetSortStyle(ColumnName))" style="color:coral;float:right"></div>*@
+
+
+
+        @if (Filter && !DropdownFilter)
+        {
+            @*<form>
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-sm" @oninput="@((e) => OnInput(e))" />
+                </div>
+            </form>*@
+            @if (Showsearchinput)
+            {
+                @*<div class="container">
+                    <div class="input-group">
+                        <input type="text" class="form-control oi oi-magnifying-glass">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary "></button>
+                        </div>
+                    </div>
+                </div>*@
+                <div class="input-group" style="min-width:200px;width:auto">
+                    <input type="text" class="form-control" placeholder="Recherche..." @oninput="@((e) => OnInput(e))">
+                    <button class="btn" style="margin-left: -40px; z-index: 100;" @onclick="(() => search(false))">
+                        <div style="color:red">
+                            ✕
+                        </div>
+                    </button>
+                </div>
+            }
+        }
+    
+    @if (DropdownFilter)
+    {
+        <div class="input-group mb-3">
+            <select class="custom-select" id="inputGroupSelect01" @bind="@SelectedDropdownFilter">
+                <option selected value=""></option>
+                @foreach (var item in CreateFilterList())
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+        </div>
+    }
+
+</th>
+
+
+
+@code {
+    [Parameter]
+    public string ThStyle { get; set; }
+
+    [Parameter]
+    public string ColumnName { get; set; }
+    [Parameter]
+    public string DisplayColumnName { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool Filter { get; set; } = false;
+
+    [Parameter]
+    public bool DropdownFilter { get; set; } = false;
+
+    [CascadingParameter]
+    BlazorDataGrid<TItem> BlazorDataTable { get; set; }
+
+    private bool IsSortedAscending;
+
+    protected int DebounceMilliseconds { get; set; } = 800;
+
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
+
+    private string PreviousValue { get; set; } = string.Empty;
+
+    private bool Showsearchinput = false;
+
+    private string _selectedDropdownFilter;
+    protected string SelectedDropdownFilter
+    {
+        get => _selectedDropdownFilter;
+        set
+        {
+            _selectedDropdownFilter = value;
+            Filtering(value, ColumnName, true);
+        }
+    }
+
+    private void SortTable(string columnName)
+    {
+        if (columnName != BlazorDataTable.CurrentSortColumn)
+        {
+            BlazorDataTable.CurrentSortColumn = columnName;
+            IsSortedAscending = true;
+            BlazorDataTable.ChangeSorting = true;
+            AppState.CallRequestRefresh();
+
+        }
+        else
+        {
+            BlazorDataTable.ChangeSorting = true;
+            AppState.CallRequestRefresh();
+            IsSortedAscending = !IsSortedAscending;
+        }
+    }
+
+    private string GetSortStyle(string columnName)
+    {
+        if (BlazorDataTable.CurrentSortColumn != columnName)
+        {
+            return string.Empty;
+        }
+        if (IsSortedAscending)
+        {
+            return "oi-arrow-thick-top";
+        }
+        else
+        {
+            return "oi-arrow-thick-bottom";
+        }
+    }
+
+    private void Filtering(string value, string columnName, bool fromlist = false)
+    {
+        BlazorDataTable.FilterDictionary[columnName] = value;
+
+        if (fromlist || value.Length < PreviousValue.Length)
+        {
+            BlazorDataTable.Items = Items;
+        }
+
+        AppState.CallRequestRefresh();
+        PreviousValue = value;
+    }
+
+    private List<string> CreateFilterList()
+    {
+        List<string> filterList = new List<string>();
+
+        var properties = typeof(TItem).GetProperties();
+        foreach (var item in Items)
+        {
+            foreach (var property in properties)
+            {
+                if (string.Equals(property.Name, ColumnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!filterList.Any(x => x == property.GetValue(item, null).ToString()))
+                    {
+                        filterList.Add(property.GetValue(item, null).ToString());
+                    }
+                }
+            }
+        }
+        filterList.Sort();
+        return filterList;
+    }
+
+    private void OnInput(ChangeEventArgs eventArgs)
+    {
+        var filterValue = ((ChangeEventArgs)eventArgs).Value?.ToString();
+        Debounce(eventArgs, DebounceMilliseconds, async (e) =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await Task.Delay(1);
+                Filtering(filterValue, ColumnName);
+            }).ConfigureAwait(false);
+
+        });
+
+    }
+
+    private void search(bool show)
+    {
+        Showsearchinput = show;
+        Filtering("", ColumnName);
+        Console.WriteLine("ok");
+    }
+}

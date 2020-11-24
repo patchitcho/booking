@@ -1,0 +1,134 @@
+﻿@page "/agence"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+
+
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Liste des agences</h3>
+    </div>
+    <div class="card-body">
+        <p>
+            <a href="CreationAgence">Créer une nouvelle agence</a>
+        </p>
+        @if (agences == null)
+        {
+            @*<p><em>Loading...</em></p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Ville</th>
+                            <th>Code postale</th>
+                        </tr>
+                    </thead>
+                </table>*@
+            <Annimation />
+        }
+        else
+        {
+            @*<DxDataGrid Data="@zones"
+                            ShowFilterRow="true">
+                    <DxDataGridColumn Field="@nameof(Zone.zone)"
+                                      Caption="Zone">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(Zone.ville)"
+                                      Caption="Ville">
+                    </DxDataGridColumn>
+                    <DxDataGridColumn Field="@nameof(Zone.codepostal)"
+                                      Caption="Code postale">
+                    </DxDataGridColumn>
+                </DxDataGrid>*@
+            <div class="confluid">
+                <table id="indexzone" class="table table-bordered table-responsive-xl">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var agence in agences)
+                        {
+                            <tr>
+                                <td>@agence.Libellé</td>
+                                <td style="width:100px"><input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(agence))" data-toggle="modal" data-target="#DetailAgence" value="Editer" /></td>
+                                <td style="width:100px"><input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(agence))" data-toggle="modal" data-target="#confirmDeleteModal" value="Supprimer" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <DetailAgence agence="agence" DataChanged="@DataChanged"></DetailAgence>
+            <ConfirmDialog OnClick="@Delete" />
+        }
+    </div>
+</div>
+
+
+
+
+@code {
+
+    Agence[] agences;
+    Agence agence = new Agence();
+    private bool hidden = false;
+    string adr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Agences";
+        //zones = await AuthService.GetJsonAsync<Agence[]>(new Uri(adr21));
+        //try
+        //{
+        response = await Http.GetAsync("api/Agences");
+        //response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            //vehicules = await JsonSerializer.DeserializeAsync<Agence[]>(responseContent);
+            agences = JsonConvert.DeserializeObject<Agence[]>(jsonContent);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+        //}
+        //catch (Exception e)
+        //{
+        //    adr = e.Message;
+        //}
+    }
+
+    private void PrepareForEdit(Agence agenceedit)
+    {
+        agence = agenceedit;
+    }
+    private void PrepareForDelete(Agence agencedelete)
+    {
+        agence = agencedelete;
+    }
+
+    private async void DataChanged()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Agences";
+        agences = await AuthService.GetJsonAsync<Agence[]>(new Uri(adr21));
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Agences/" + agence.AgenceId;
+        var task = await AuthService.DeleteJsonAsync(new Uri(adr21));
+        await JSRuntime.InvokeAsync<object>("JsFunctions.CloseModal", "confirmDeleteModal");
+        DataChanged();
+        agence = new Agence();
+    }
+}

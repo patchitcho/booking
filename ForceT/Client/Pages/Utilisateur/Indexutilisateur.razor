@@ -1,0 +1,229 @@
+﻿@page "/utilisateur"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Liste des utilisateurs</h3>
+    </div>
+    <div class="card-body">
+        <p>
+            <a href="CreationUtilisateur">Créer un nouveau utilisateur</a>
+        </p>
+        @if (applicationUsers == null)
+        {
+            <Annimation />
+        }
+        else
+        {
+            <div style="margin-right:-14px;margin-left:-15px;display:flex;flex-wrap:wrap">
+                <div class="col-4" style="min-width:220px;max-width:400px;padding-right:14px;flex:1">
+                    <label>Utilisateur :</label>
+                    <BlazoredTypeahead SearchMethod="SearchUser" @bind-Value="apuser.userapp" EnableDropDown="true" class="input-group">
+                        <SelectedTemplate Context="applicationUser">
+                            @applicationUser.UserName
+                        </SelectedTemplate>
+                        <ResultTemplate Context="applicationUser">
+                            @applicationUser.UserName @*<strong>    @applicationUser.NormalizedUserName</strong>*@
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                </div>
+                @if (apuser.userapp != null)
+                {
+                    @if (apuser.userapp.UserRoles != null)
+                    {
+                        <div class="col-1" style="min-width:55px;padding-left:0px">
+                            <button type="submit" class="btn @CssUpd" style="margin-top:32px" @onclick="Updateuser">
+                                <i class="oi oi-grid-three-up"></i>
+                            </button>
+                        </div>
+                        roleModel = new RoleModel();
+                        @foreach (var item in apuser.userapp.UserRoles.Select(x => x.Role).ToList())
+                        {
+                            roleModel.GetType().GetProperty(item.Name).SetValue(roleModel, true);
+                        }
+                    }
+                }
+                else
+                {
+                    roleModel = new RoleModel();
+                }
+            </div>
+            @if (apuser.userapp != null)
+            {
+                @if (apuser.userapp.UserRoles != null)
+                {
+                    @if (hidden)
+                    {
+                        <div style="max-width:1000px;font-size:0.9rem">
+                            <label style="margin-top:10px">Roles :</label>
+                            <ul class="row">
+                                @foreach (var item in (apuser.userapp.UserRoles.Select(x => x.Role).OrderBy(x => x.NormalizedName)))
+                                {
+                                    <li class="col-3" style="min-width:250px">
+                                        @item.NormalizedName
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <EditForm Model="roleModel">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Véhicule" ID="id1">
+                                        <roles>
+                                            <Role label="Création de véhicule" bind="roleModel.VehiculeCreat" />
+                                            <Role label="Liste des véhicules" bind="roleModel.VehiculeRead" />
+                                            <Role label="Modification de véhicule" bind="roleModel.VehiculeUpdt" />
+                                            <Role label="Suppression de véhicule" bind="roleModel.VehiculeDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Adresse" ID="id2">
+                                        <roles>
+                                            <Role label="Création d'adresse" bind="roleModel.AdresseCreat" />
+                                            <Role label="Liste des adresse" bind="roleModel.AdresseRead" />
+                                            <Role label="Modification d'adresse" bind="roleModel.AdresseUpdt" />
+                                            <Role label="Suppression d'adresse" bind="roleModel.AdresseDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Sondage" ID="id3">
+                                        <roles>
+                                            <Role label="Création de sondage" bind="roleModel.SondageCreat" />
+                                            <Role label="Liste des sondages" bind="roleModel.SondageRead" />
+                                            <Role label="Modification de sondage" bind="roleModel.SondageUpdt" />
+                                            <Role label="Suppression de sondage" bind="roleModel.SondageDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Course" ID="id4">
+                                        <roles>
+                                            <Role label="Création de course" bind="roleModel.CourseCreat" />
+                                            <Role label="Liste des courses" bind="roleModel.CourseRead" />
+                                            <Role label="Modification de course" bind="roleModel.CourseUpdt" />
+                                            <Role label="Suppression de course" bind="roleModel.CourseDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Zone" ID="id5">
+                                        <roles>
+                                            <Role label="Création de zone" bind="roleModel.ZoneCreat" />
+                                            <Role label="Liste des zones" bind="roleModel.ZoneRead" />
+                                            <Role label="Modification de zone" bind="roleModel.ZoneUpdt" />
+                                            <Role label="Suppression de zone" bind="roleModel.ZoneDlet" />
+                                        </roles>
+                                    </Roles>
+                                    <Roles title="Tournée" ID="id6">
+                                        <roles>
+                                            <Role label="Création de tournée" bind="roleModel.TourneeCreat" />
+                                            <Role label="Liste des tournées" bind="roleModel.TourneeRead" />
+                                            <Role label="Modification de tournée" bind="roleModel.TourneeUpdt" />
+                                            <Role label="Suppression de tournée" bind="roleModel.TourneeDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <Roles title="Agence" ID="id7">
+                                        <roles>
+                                            <Role label="Création d'agence" bind="roleModel.AgenceCreat" />
+                                            <Role label="Liste des agences" bind="roleModel.AgenceRead" />
+                                            <Role label="Modification d'agence" bind="roleModel.AgenceUpdt" />
+                                            <Role label="Suppression d'agence" bind="roleModel.AgenceDlet" />
+                                        </roles>
+                                    </Roles>
+                                </div>
+                            </div>
+                        </EditForm>
+                    }
+                }
+            }
+        }
+    </div>
+</div>
+
+
+@code {
+
+    List<ApplicationUser> applicationUsers;
+    ApplicationUser applicationUser = new ApplicationUser();
+    private bool hidden = true;
+    List<string> roles;
+    RoleModel roleModel = new RoleModel();
+    Appuser apuser = new Appuser();
+    string CssUpd = "btn-success";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUsers();
+    }
+
+    private async Task<IEnumerable<ApplicationUser>> SearchUser(string searchText)
+    {
+        if (applicationUsers == null)
+        {
+            await GetUsers();
+        }
+        return await Task.FromResult(applicationUsers.Where(x => x.UserName.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private async Task<List<ApplicationUser>> GetUsers()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Accounts";
+
+        response = await Http.GetAsync("api/Accounts");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            applicationUsers = JsonConvert.DeserializeObject<List<ApplicationUser>>(jsonContent);
+        }
+        else
+        {
+            Console.WriteLine(response.StatusCode);
+        }
+        return applicationUsers.ToList();
+    }
+
+    private List<string> SearchRoles(string name)
+    {
+        roles = applicationUsers.Where(x => x.UserName == name).Select(y => y.UserRoles.ToString()).ToList();
+        return roles;
+    }
+
+    private async void DataChanged()
+    {
+        await GetUsers();
+        StateHasChanged();
+    }
+
+    private async Task Updateuser()
+    {
+        if (!hidden)
+        {
+            //update roles from api
+
+        }
+
+        hidden = !hidden;
+        if (CssUpd == "btn-success")
+        {
+            CssUpd = "btn-warning";
+        }
+        else
+        {
+            CssUpd = "btn-success";
+        }
+    }
+
+    public class Appuser
+    {
+        public ApplicationUser userapp { get; set; }
+    }
+}

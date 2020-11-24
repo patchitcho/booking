@@ -1,0 +1,92 @@
+﻿@page "/creationproduit"
+@inject HttpClient Http
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Création d'un produit</h3>
+    </div>
+    <div class="card-body">
+        <EditForm Model="produit" OnValidSubmit="Creerproduit">
+            <div style="font-size:15px">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+            </div>
+            <div class="form-group">
+                <label for="societe">Code produit :</label>
+                <InputText placeholder="Code" class="form-control" @bind-Value="produit.CodeArticle" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => produit.CodeArticle)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nom">Designation :</label>
+                <InputText placeholder="Designation" class="form-control" @bind-Value="produit.Designation" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => produit.Designation)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="prenom">Prix :</label>
+                <MyInputNumber placeholder="Prix" class="form-control" @bind-Value="produit.Prix" ParsingErrorMessage="Vous devez saisir le prix"/>
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => produit.Prix)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tel">Type produit :</label>
+                <MyInputNumber placeholder="Type" class="form-control" @bind-Value="produit.TypeproduitId" ParsingErrorMessage="Vous devez saisir le type" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => produit.TypeproduitId)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Famille produit :</label>
+                <MyInputNumber placeholder="Famille" class="form-control" @bind-Value="produit.FamilleproduitId" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => produit.FamilleproduitId)" />
+                </div>
+            </div>
+            <div class="form-group text-center">
+                @if (wait)
+                {
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Ajouter...
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                }
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+
+    Produit produit = new Produit();
+    private bool wait = false;
+    bool show = false;
+
+    private async Task Creerproduit()
+    {
+        wait = true;
+        string produitContent = JsonConvert.SerializeObject(produit);
+        var response = await Http.PostAsync("api/Produits", new StringContent(produitContent, Encoding.UTF8, "application/json"));
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/produit");
+            wait = false;
+        }
+        else
+        {
+            Console.WriteLine(response.StatusCode);
+        }
+    }
+}

@@ -1,0 +1,8 @@
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\bin\Debug\netstandard2.0\ForceT.Shared.deps.json
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\bin\Debug\netstandard2.0\ForceT.Shared.dll
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\bin\Debug\netstandard2.0\ForceT.Shared.pdb
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\obj\Debug\netstandard2.0\ForceT.Shared.csprojAssemblyReference.cache
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\obj\Debug\netstandard2.0\ForceT.Shared.AssemblyInfoInputs.cache
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\obj\Debug\netstandard2.0\ForceT.Shared.AssemblyInfo.cs
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\obj\Debug\netstandard2.0\ForceT.Shared.dll
+C:\Users\amine\source\repos\Force tracking\ForceT\Shared\obj\Debug\netstandard2.0\ForceT.Shared.pdb

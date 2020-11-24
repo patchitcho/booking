@@ -1,0 +1,130 @@
+﻿@page "/sondage"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+
+
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Liste des sondages</h3>
+    </div>
+    <div class="card-body">
+        <p>
+            <a href="CreationSondage">Créer un nouveau sondage</a>
+        </p>
+        @if (sondages == null)
+        {
+            @*<p><em>Loading...</em></p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Ville</th>
+                            <th>Code postale</th>
+                        </tr>
+                    </thead>
+                </table>*@
+            <Annimation />
+        }
+        else
+        {
+            <div class="confluid">
+                <table id="indexzone" class="table table-bordered table-responsive-xl">
+                    <thead class="thead-light">
+                        <tr style="height:18px">
+                            <th>Nom</th>
+                            <th>Question</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Obligatoire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sondage in sondages)
+                        {
+                            <tr>
+                                <td>@sondage.Libellé</td>
+                                <td>@sondage.Question</td>
+                                <td>@sondage.Type</td>
+                                <td>@sondage.Statut</td>
+                                <td>@sondage.Obligatoire</td>
+                                <td style="width:100px"><input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(sondage))" data-toggle="modal" data-target="#DetailSondage" value="Editer" /></td>
+                                <td style="width:100px"><input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(sondage))" data-toggle="modal" data-target="#confirmDeleteModal" value="Supprimer" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <DetailSondage sondage="sondage" DataChanged="@DataChanged"></DetailSondage>
+            <ConfirmDialog OnClick="@Delete" />
+        }
+    </div>
+</div>
+
+
+
+
+@code {
+
+    Sondage[] sondages;
+    Sondage sondage = new Sondage();
+    private bool hidden = false;
+    string adr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Sondages";
+        //zones = await AuthService.GetJsonAsync<Sondage[]>(new Uri(adr21));
+        //try
+        //{
+        response = await Http.GetAsync("api/Sondages");
+        //response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            //sondages = await JsonSerializer.DeserializeAsync<Sondage[]>(responseContent);
+            sondages = JsonConvert.DeserializeObject<Sondage[]>(jsonContent);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+        //}
+        //catch (Exception e)
+        //{
+        //    adr = e.Message;
+        //}
+    }
+
+    private void PrepareForEdit(Sondage sondageedit)
+    {
+        sondage = sondageedit;
+    }
+    private void PrepareForDelete(Sondage sondagedelete)
+    {
+        sondage = sondagedelete;
+    }
+
+    private async void DataChanged()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Sondages";
+        sondages = await AuthService.GetJsonAsync<Sondage[]>(new Uri(adr21));
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Sondages/" + sondage.SondageId;
+        var task = await AuthService.DeleteJsonAsync(new Uri(adr21));
+        await JSRuntime.InvokeAsync<object>("JsFunctions.CloseModal", "confirmDeleteModal");
+        DataChanged();
+        sondage = new Sondage();
+    }
+}

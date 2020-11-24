@@ -1,0 +1,74 @@
+﻿@page "/creationagence"
+@inject HttpClient Http
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Création d'une nouvelle agence</h3>
+    </div>
+    <EditForm Model="agence" OnValidSubmit="Creeragence">
+        <div style="font-size:15px">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="Nom">Nom :</label>
+                <InputText placeholder="Nom" class="form-control" @bind-Value="agence.Libellé" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => agence.Libellé)" />
+                </div>
+            </div>
+            <div class="form-group text-center">
+                @if (wait)
+                {
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Ajouter...
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                }
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+
+    Agence agence = new Agence();
+    private bool wait = false;
+
+
+    private async Task Creeragence()
+    {
+        //ShowErrors = false;
+        wait = true;
+        //await Task.Delay(10000);
+
+        //Uri crzone = new Uri("api/Agences");
+        //var result = await AuthService.PostJsonAsync<Agence>(crzone,agence);
+
+        //var zoneasjson = JsonSerializer.Serialize(agence);
+        string agenceContent = JsonConvert.SerializeObject(agence);
+        var response = await Http.PostAsync("api/Agences",new StringContent(agenceContent, Encoding.UTF8, "application/json"));
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/agence");
+            wait = false;
+        }
+        else
+        {
+            //    Error = result.Error;
+            //    ShowErrors = true;
+            response.StatusCode.ToString();
+        }
+    }
+}
