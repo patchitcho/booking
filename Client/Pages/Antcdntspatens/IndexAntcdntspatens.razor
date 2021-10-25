@@ -1,0 +1,179 @@
+﻿@page "/Antcdntspatens"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using System.Net.Http
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Liste des zones</h3>
+    </div>
+    <div class="card-body">
+        <div>
+            <a href="CreationAntcdntspatens" style="font-size:1rem !important;margin-bottom:10px">
+                <i class="fa fa-plus-circle" style="color:#8ab7f6;font-size:16px;margin-right:5px"></i>Créer une nouvelle zone
+            </a>
+        </div>
+        @if (Antcdntspatens == null)
+        {
+            <Annimation />
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <BlazorDataGrid Items="@Antcdntspatens" ShowTotalResult="true" TableClass="table table-hover table-bordered table-responsive-xl" TableStyle="border-width:0.5px"
+                                    TheadStyle="border:hidden" TheadClass="thead-light" Translation="@translate" ShowPageSelector="true" PageSelector="@PageSelector" PageSize="10"
+                                    ExportExcel="ExportExcel" CreatePdf="CreatePdf">
+                        <BlazorDataGridColumn>
+                            <DataGridColumn Items="@Antcdntspatens" ColumnName="AntcptnCode" DisplayColumnName="AntcptnCode" Filter="true" ThStyle="width:25% ;min-width:120px;border:hidden"></DataGridColumn>
+                            <DataGridColumn Items="@Antcdntspatens" ColumnName="AntcptnLib" DisplayColumnName="AntcptnLib" Filter="true" ThStyle="width:25% ;min-width:120px;border:hidden"></DataGridColumn>
+                            <DataGridColumn Items="@Antcdntspatens" ColumnName="AntcptnComnt" DisplayColumnName="AntcptnComnt" Filter="true" ThStyle="width:25% ;min-width:120px;border:hidden"></DataGridColumn>
+                            <DataGridColumn Items="@Antcdntspatens" ColumnName="PtienIdf" DisplayColumnName="PtienIdf" Filter="true" ThStyle="width:25% ;min-width:160px;border:hidden"></DataGridColumn>
+                            <th class="Fixhead"></th>
+                        </BlazorDataGridColumn>
+                        <GridRow>
+                            <td style="padding:0.5rem !important">@context.AntcptnCode</td>
+                            <td style="padding: 0.5rem !important">@context.AntcptnLib</td>
+                            <td style="padding:0.5rem !important">@context.AntcptnComnt</td>
+                            <td style="padding:0.5rem !important">@context.PtienIdf</td>
+                            <td class="Fixcol">
+                                <div>
+                                    <button class="btn-grid btn-Gridedit" @onclick="(() => PrepareForEdit(context))" data-toggle="modal" data-target="#DetailZone">
+                                        <i class="oi oi-document"></i>
+                                    </button>
+                                    <button class="btn-grid btn-Gridsup" @onclick="(() => PrepareForDelete(context))" data-toggle="modal" data-target="#confirmDeleteModal">
+                                        <i class="oi oi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </GridRow>
+                    </BlazorDataGrid>
+                </div>
+            </div>
+            <DetailAntcdntspatens Antcdntspaten=Antcdntspaten DataChanged="@DataChanged"></DetailAntcdntspatens>
+            <ConfirmDialog OnClick="@Delete" />
+        }
+    </div>
+</div>
+
+
+@code {
+
+    TabpAntcdntspaten[] Antcdntspatens;
+    List<TabpAntcdntspaten> zoo;
+    TabpAntcdntspaten Antcdntspaten = new TabpAntcdntspaten();
+    private bool hidden = false;
+    string adr;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpResponseMessage response;
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/TabpAntcdntspatens";
+
+        response = await Http.GetAsync("api/TabpAntcdntspatens");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            //zones = await JsonSerializer.DeserializeAsync<Zone[]>(responseContent);
+            Antcdntspatens = JsonConvert.DeserializeObject<TabpAntcdntspaten[]>(jsonContent);
+            zoo = JsonConvert.DeserializeObject<List<TabpAntcdntspaten>>(jsonContent);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+    }
+
+    private Dictionary<string, string> translate = new Dictionary<string, string>
+{
+        {"next", "Suivant" },
+        {"previous", "Precedant" },
+        {"pages", "Page __curpage__ de __totalpages__" },
+        {"totalresult", "__totalcount__ ligne" },
+        {"totalresultplural", "__totalcount__ lignes"},
+        {"filteredresults", "__filteredcount__ result de __totalcount__ lignes" },
+        {"filteredresultsplural", "__filteredcount__ results de __totalcount__ lignes"  },
+        {"selector", "lignes par page :" }
+    };
+
+    private Dictionary<string, int> PageSelector = new Dictionary<string, int>
+{
+        {"5", 5 },
+        {"10", 10 },
+        {"20", 20 },
+        {"30", 30 },
+        {"Tout", 0 }
+    };
+
+    private void PrepareForEdit(TabpAntcdntspaten zoneedit)
+    {
+        Antcdntspaten = zoneedit;
+    }
+
+    private void PrepareForDelete(TabpAntcdntspaten zonedelete)
+    {
+        Antcdntspaten = zonedelete;
+    }
+
+    private async void DataChanged()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/TabpAntcdntspaten";
+        Antcdntspatens = await AuthService.GetJsonAsync<TabpAntcdntspaten[]>(new Uri(adr21));
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        string adr21 = NavigationManager.BaseUri.ToString() + "api/Zones/" + Antcdntspaten.AntcdnIdf;
+        var task = await AuthService.DeleteJsonAsync(new Uri(adr21));
+        await JSRuntime.InvokeAsync<object>("JsFunctions.CloseModal", "confirmDeleteModal");
+        DataChanged();
+        Antcdntspaten = new TabpAntcdntspaten();
+    }
+
+    public async Task CreatePdf()
+    {
+        HttpResponseMessage response;
+        ReportResult rpt = new ReportResult();
+        response = await Http.GetAsync("api/Zones/exportpdf");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContentPdf = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            rpt = JsonConvert.DeserializeObject<ReportResult>(jsonContentPdf);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+
+        string pdfName = $"Liste des zones-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.pdf";
+        await JSRuntime.InvokeAsync<object>("JsFunctions.saveAsFile", pdfName, Convert.ToBase64String(rpt.stream.ToArray()));
+    }
+
+    public async Task ExportExcel()
+    {
+        HttpResponseMessage response;
+        ReportResult rpt = new ReportResult();
+        response = await Http.GetAsync("api/Zones/exportexcel");
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonContentexcel = response.Content.ReadAsStringAsync().Result;
+            adr = response.StatusCode.ToString();
+            rpt = JsonConvert.DeserializeObject<ReportResult>(jsonContentexcel);
+        }
+        else
+        {
+            adr = response.RequestMessage.ToString();
+        }
+
+        string excelName = $"Liste des zones-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+        await JSRuntime.InvokeAsync<object>("JsFunctions.saveAsFile", excelName, Convert.ToBase64String(rpt.stream.ToArray()));
+    }
+}

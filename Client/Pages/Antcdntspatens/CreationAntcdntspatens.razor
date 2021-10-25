@@ -1,0 +1,105 @@
+﻿@page "/creationAntcdntspatens"
+@inject HttpClient Http
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<div class="card" style="border-radius:10px">
+    <div class="card-header" style="border-radius:10px">
+        <h3>Création d'une nouvelle Antcdntspatens</h3>
+    </div>
+    <EditForm Model="Antcdntspaten" OnValidSubmit="CreerTabpAntcdntspatens">
+        <div style="font-size:15px">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="AntcptnCode">AntcptnCode :</label>
+                <InputText placeholder="AntcptnCode" class="form-control" @bind-Value="Antcdntspaten.AntcptnCode" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.AntcptnCode)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="AntcptnLib">AntcptnLib :</label>
+                <InputText placeholder="AntcptnLib" class="form-control" @bind-Value="Antcdntspaten.AntcptnLib" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.AntcptnLib)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="AntcptnComnt">AntcptnComnt :</label>
+                <InputText placeholder="AntcptnComnt" class="form-control" @bind-Value="Antcdntspaten.AntcptnComnt" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.AntcptnComnt)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="PtienIdf">PtienIdf :</label>
+                <MyInputNumber placeholder="PtienIdf" class="form-control" @bind-Value="Antcdntspaten.PtienIdf" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.PtienIdf)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="AntcdnIdf">AntcdnIdf :</label>
+                <MyInputNumber placeholder="AntcdnIdf" class="form-control" @bind-Value="Antcdntspaten.AntcdnIdf" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.AntcdnIdf)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Code">StartDate :</label>
+                <InputDate placeholder="StartDate" class="form-control" @bind-Value="Antcdntspaten.StartDate" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.StartDate)" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="EndDate">EndDate :</label>
+                <InputDate placeholder="EndDate" class="form-control" @bind-Value="Antcdntspaten.EndDate" />
+                <div style="font-size:12px">
+                    <ValidationMessage For="@(() => Antcdntspaten.EndDate)" />
+                </div>
+            </div>
+            <div class="form-group text-center">
+                @if (wait)
+                {
+                    <button type="submit" class="btn btn-success">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Ajouter...
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                }
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+
+    TabpAntcdntspaten Antcdntspaten = new TabpAntcdntspaten();
+    private bool wait = false;
+
+    private async Task CreerTabpAntcdntspatens()
+    {
+        wait = true;
+
+        string TabpAntcdntspatensContent = JsonConvert.SerializeObject(Antcdntspaten);
+        var response = await Http.PostAsync("api/TabpAntcdntspatens", new StringContent(TabpAntcdntspatensContent, Encoding.UTF8, "application/json"));
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/TabpAntcdntspatens");
+            wait = false;
+        }
+        else
+        {
+            response.StatusCode.ToString();
+        }
+    }
+}

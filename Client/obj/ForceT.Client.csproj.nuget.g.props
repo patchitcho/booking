@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">False</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\amine\.nuget\packages\;C:\Microsoft\Xamarin\NuGet\;C:\Program Files\dotnet\sdk\NuGetFallbackFolder</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.8.1</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="$([MSBuild]::EnsureTrailingSlash($(NuGetPackageFolders)))" />
+  </ItemGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Content Include="$(NuGetPackageRoot)radzen.blazor\2.0.13\contentFiles\any\netstandard2.1\Properties\launchSettings.json" Condition="Exists('$(NuGetPackageRoot)radzen.blazor\2.0.13\contentFiles\any\netstandard2.1\Properties\launchSettings.json')">
+      <NuGetPackageId>Radzen.Blazor</NuGetPackageId>
+      <NuGetPackageVersion>2.0.13</NuGetPackageVersion>
+      <NuGetItemType>Content</NuGetItemType>
+      <Private>False</Private>
+      <Link>Properties\launchSettings.json</Link>
+    </Content>
+  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.components.analyzers\3.1.0\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.components.analyzers\3.1.0\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)radzen.blazor\2.0.13\buildTransitive\Radzen.Blazor.props" Condition="Exists('$(NuGetPackageRoot)radzen.blazor\2.0.13\buildTransitive\Radzen.Blazor.props')" />
+    <Import Project="$(NuGetPackageRoot)oceanware.ocean.blazor\2.0.0\buildTransitive\Oceanware.Ocean.Blazor.props" Condition="Exists('$(NuGetPackageRoot)oceanware.ocean.blazor\2.0.0\buildTransitive\Oceanware.Ocean.Blazor.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.netframework.analyzers\2.9.8\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.netframework.analyzers\2.9.8\build\Microsoft.NetFramework.Analyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.netcore.analyzers\2.9.8\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.netcore.analyzers\2.9.8\build\Microsoft.NetCore.Analyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codequality.analyzers\2.9.8\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codequality.analyzers\2.9.8\build\Microsoft.CodeQuality.Analyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codeanalysis.versioncheckanalyzer\2.9.8\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codeanalysis.versioncheckanalyzer\2.9.8\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codeanalysis.fxcopanalyzers\2.9.8\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codeanalysis.fxcopanalyzers\2.9.8\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.blazor.mono\3.1.0-preview4.19578.1\build\netstandard1.0\Microsoft.AspNetCore.Blazor.Mono.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.blazor.mono\3.1.0-preview4.19578.1\build\netstandard1.0\Microsoft.AspNetCore.Blazor.Mono.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.blazor.build\3.1.0-preview4.19579.2\build\netstandard1.0\Microsoft.AspNetCore.Blazor.Build.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.blazor.build\3.1.0-preview4.19579.2\build\netstandard1.0\Microsoft.AspNetCore.Blazor.Build.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_NetFramework_Analyzers Condition=" '$(PkgMicrosoft_NetFramework_Analyzers)' == '' ">C:\Users\amine\.nuget\packages\microsoft.netframework.analyzers\2.9.8</PkgMicrosoft_NetFramework_Analyzers>
+    <PkgMicrosoft_NetCore_Analyzers Condition=" '$(PkgMicrosoft_NetCore_Analyzers)' == '' ">C:\Users\amine\.nuget\packages\microsoft.netcore.analyzers\2.9.8</PkgMicrosoft_NetCore_Analyzers>
+    <PkgMicrosoft_CodeQuality_Analyzers Condition=" '$(PkgMicrosoft_CodeQuality_Analyzers)' == '' ">C:\Users\amine\.nuget\packages\microsoft.codequality.analyzers\2.9.8</PkgMicrosoft_CodeQuality_Analyzers>
+    <PkgMicrosoft_CodeAnalysis_VersionCheckAnalyzer Condition=" '$(PkgMicrosoft_CodeAnalysis_VersionCheckAnalyzer)' == '' ">C:\Users\amine\.nuget\packages\microsoft.codeanalysis.versioncheckanalyzer\2.9.8</PkgMicrosoft_CodeAnalysis_VersionCheckAnalyzer>
+    <PkgMicrosoft_CodeAnalysis_FxCopAnalyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_FxCopAnalyzers)' == '' ">C:\Users\amine\.nuget\packages\microsoft.codeanalysis.fxcopanalyzers\2.9.8</PkgMicrosoft_CodeAnalysis_FxCopAnalyzers>
+    <PkgMicrosoft_AspNetCore_Blazor_Mono Condition=" '$(PkgMicrosoft_AspNetCore_Blazor_Mono)' == '' ">C:\Users\amine\.nuget\packages\microsoft.aspnetcore.blazor.mono\3.1.0-preview4.19578.1</PkgMicrosoft_AspNetCore_Blazor_Mono>
+    <PkgMicrosoft_AspNetCore_Blazor_DevServer Condition=" '$(PkgMicrosoft_AspNetCore_Blazor_DevServer)' == '' ">C:\Users\amine\.nuget\packages\microsoft.aspnetcore.blazor.devserver\3.1.0-preview4.19579.2</PkgMicrosoft_AspNetCore_Blazor_DevServer>
+    <PkgMicrosoft_AspNetCore_Blazor_Build Condition=" '$(PkgMicrosoft_AspNetCore_Blazor_Build)' == '' ">C:\Users\amine\.nuget\packages\microsoft.aspnetcore.blazor.build\3.1.0-preview4.19579.2</PkgMicrosoft_AspNetCore_Blazor_Build>
+  </PropertyGroup>
+</Project>

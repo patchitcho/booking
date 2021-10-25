@@ -1,0 +1,60 @@
+﻿<nav class="side-navbar" id="sid">
+    <div class="side-navbar-wrapper">
+        <!-- Sidebar Header    -->
+        <div class="sidenav-header d-flex align-items-center justify-content-center">
+            <!-- User Info-->
+            <div class="sidenav-header-inner text-center">
+                <h2 class="h5">Nathan Andrews</h2><span>Web Developer</span>
+            </div>
+            <!-- Small Brand information, appears on minimized sidebar-->
+            <div class="sidenav-header-logo"><a class="brand-small text-center"><strong>F</strong><strong class="text-primary">T</strong></a></div>
+        </div>
+        <!-- Sidebar Navigation Menus-->
+        <div id="sid">
+            <div class="main-menu">
+                <h5 class="sidenav-heading">Main</h5>
+                @*<AuthorizeView Roles="Adminstrator">*@
+            <ul id="side-main-menu" class="side-menu list-unstyled">
+                <li><a href="" Match="NavLinkMatch.All"> <i class="icon-home"></i>Home</a></li>
+                <li><a href="Antcdntspatens"> <i class="fa fa-truck"></i>Antcdntspatens</a></li>
+                @*<li><a href="sondage"> <i class="fa fa-bar-chart"></i>Sondage</a></li>*@
+                @*<li><a href="zone"> <i class="icon-grid"></i>Zone</a></li>
+        <li><a href="agence"> <i class="icon-padnote"></i>Agence</a></li>
+        <li><a href="adresse"> <i class="icon-pencil-case"></i>Adresse</a></li>
+        <li><a href="course"> <i class="icon-list-1"></i>Course</a></li>
+        <li><a href="tournee"> <i class="icon-interface-windows"></i>Tournée</a></li>
+        <li>
+            <a href="#stock" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Stock</a>
+            <ul id="stock" href="stock" class="collapse list-unstyled ">
+                <li><a href="stock"><i class="oi oi-document"></i>Etat du stock</a></li>
+                <li><a href="produit"><i class="oi oi-list"></i>Produit</a></li>
+                <li><a href="creationentstock"><i class="oi oi-pencil"></i>Entrée stock</a></li>
+            </ul>
+        </li>*@
+                @*<li>
+            <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse" onclick="toggleNavBar()"> <i class="icon-interface-windows"></i>Example dropdown </a>
+            <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                <li><a href="#">Page</a></li>
+                <li><a href="#">Page</a></li>
+                <li><a href="#">Page</a></li>
+            </ul>
+        </li>
+                *@
+            </ul>
+                @*</AuthorizeView>*@
+
+            </div>
+            <div class="admin-menu">
+                <div class="sidenav-header-inner"><h5 class="sidenav-heading">Administration</h5></div>
+                <div class="sidenav-header-logo"><h5 class="brand-small sidenav-heading">Admin</h5></div>
+                <ul id="side-admin-menu" class="side-menu list-unstyled">
+                    <li> <a href="utilisateur"> <i class="icon-screen"> </i>Utilisateur</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+@code {
+
+}
